@@ -1,11 +1,11 @@
-#External.js
+# External.js
 By: Jan Schoepke (janschoepke@me.com), originally by Cal Evans (cal@calevans.com) 
 
 License: MIT
 
 This is a plugin for Reveal.js. It allows you to specifiy external files to be loaded into a presentation. This extension also allows external files in already external files (Subfiles). It allows a course, which may be hundreds of slides, to be broken into modules and managed individually. 
 
-#Using external.js
+# Using external.js
 
 Using the plugin is easy. First, register it in your Reveal.initalize block.
 
