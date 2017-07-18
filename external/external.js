@@ -14,51 +14,62 @@
 
 (function(){
     loadExternal(document);
-    
+
+	function updateSection(section, path) {
+        "use strict";
+
+		var xhr = new XMLHttpRequest();
+		var url = section.getAttribute( "data-external" );
+
+		url = path !== "" ? (path + "/" + url) : url;
+			
+		xhr.onreadystatechange = function() {
+			if( xhr.readyState === 4 ) {
+				// status code 0 could be file:// or network failure
+				if (
+					( xhr.status >= 200 && xhr.status < 300 ) ||
+					( xhr.status === 0 && xhr.responseText )
+				) {
+					section.innerHTML = xhr.responseText;
+
+					// Force reveal to redraw current slide
+					Reveal.sync();
+					Reveal.setState(Reveal.getState());
+
+					loadExternal(section, url.substr(0, url.lastIndexOf("/")));
+				}
+				else {
+					console.log("ERROR: The attempt to fetch " + url + " failed with HTTP status " + xhr.status + ".");
+				}
+			}
+		};
+
+		xhr.responseType = 'text';
+		xhr.open( "GET", url, true );
+
+		try {
+			xhr.send();
+		}
+		catch ( e ) {
+			console.log( "Failed to get the file " + url + ". Make sure that the presentation and the file are served by a HTTP server and the file can be found there. " + e );
+		}
+
+	}
+
     function loadExternal(selector, path) {
         "use strict";
 
-        var sections = selector.querySelectorAll( "[data-external]"),
-            section, 
-            i, 
-            xhr, 
-            url;
+        var sections = selector.querySelectorAll( "[data-external]");
         
         path = typeof path === "undefined" ? "" : path;
 
-        for( i = 0; i < sections.length; i+=1 ) {
+        for( var i = 0; i < sections.length; i+=1 ) {
 
-            section = sections[i];
+            var section = sections[i];
 
             if( section.getAttribute( "data-external" ).length ) {
-
-                xhr = new XMLHttpRequest();
-                url = section.getAttribute( "data-external" );
-
-                url = path !== "" ? (path + "/" + url) : url;
-                 
-                xhr.onreadystatechange = function() {
-                    if( xhr.readyState === 4 ) {
-                        // file protocol yields status code 0 (useful for local debug, mobile applications etc.)
-                        if ( ( xhr.status >= 200 && xhr.status < 300 ) || xhr.status === 0 ) {
-                            section.innerHTML = xhr.responseText;
-                            loadExternal(section, url.substr(0, url.lastIndexOf("/")));
-                        }
-                        else {
-                            console.log("ERROR: The attempt to fetch " + url + " failed with HTTP status " + xhr.status + ".");
-                        }
-                    }
-                };
-
-                xhr.open( "GET", url, false );
-
-                try {
-                    xhr.send();
-                }
-                catch ( e ) {
-                    console.log( "Failed to get the file " + url + ". Make sure that the presentation and the file are served by a HTTP server and the file can be found there. " + e );
-                }
-            }
+				updateSection(section, path);
+			}
         }
         return;
     }
