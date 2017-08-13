@@ -1,6 +1,6 @@
 {
   "name": "reveal_external",
-  "version": "1.2.0",
+  "version": "1.3.0",
   "description": "Plugin for reveal.js to import external sections.",
   "homepage": "https://github.com/janschoepke/reveal_external#readme",
   "license": "MIT",
