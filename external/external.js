@@ -109,10 +109,13 @@
 						html = ( new DOMParser ).parseFromString(
 							xhr.responseText, 'text/html'
 						);
-						if (fragment !== '') {
+						if ( fragment !== '' ) {
 							nodes = html.querySelectorAll( fragment );
 						} else {
-							nodes = html.querySelectorAll( 'body > *' );
+							nodes = html.querySelector( 'body' ).childNodes;
+						}
+						if ( !replace ) {
+							target.innerHTML = '';
 						}
 						for ( var i = 0, c = nodes.length; i < c; i++ ) {
 							convertUrls( nodes[i], path );
@@ -126,7 +129,9 @@
 								Reveal.setState( Reveal.getState() );
 							}
 
-							loadExternal( node, path );
+							if (node instanceof Element) {
+								loadExternal( node, path );
+							}
 						}
 						if ( replace ) {
 							target.parentNode.removeChild( target );
@@ -156,17 +161,29 @@
 	};
 
 	function loadExternal( container, path ) {
-		var target, section;
-		var sections = container.querySelectorAll(
-			'[data-external], [data-external-replace]'
-		);
+		var target, section, sections;
 		path = typeof path === "undefined" ? "" : path;
-
-		for ( var i = 0; i < sections.length; i += 1 ) {
-			section = sections[i];
-			target = getTarget( section );
-			if (target) {
-				updateSection( section, target, path );
+		if (
+			container instanceof Element &&
+			(
+				container.getAttribute( 'data-external' ) ||
+				container.getAttribute( 'data-external-replace' )
+			)
+		) {
+		  	target = getTarget( container );
+		  	if (target) {
+				updateSection( container, target, path );
+			}
+		} else {
+			sections = container.querySelectorAll(
+				'[data-external], [data-external-replace]'
+			);
+			for ( var i = 0; i < sections.length; i += 1 ) {
+				section = sections[i];
+				target = getTarget(section);
+				if (target) {
+					updateSection(section, target, path);
+				}
 			}
 		}
 	}
