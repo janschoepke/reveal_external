@@ -3,22 +3,70 @@ By: Jan Schoepke (janschoepke@me.com), originally by Cal Evans (cal@calevans.com
 
 License: MIT
 
-This is a plugin for Reveal.js. It allows you to specifiy external files to be loaded into a presentation. This extension also allows external files in already external files (Subfiles). It allows a course, which may be hundreds of slides, to be broken into modules and managed individually. 
+This is a plugin for Reveal.js. It allows you to specify external files to be loaded into a presentation. This extension also allows external files in already external files (Subfiles). It allows a course, which may be hundreds of slides, to be broken into modules and managed individually. 
 
 # Using external.js
 
-Using the plugin is easy. First, register it in your Reveal.initalize block.
+Using the plugin is easy. First, register it in your Reveal.js initialize block.
 
+```javascript
+{ 
+    src: 'plugin/external/external.js', 
+    condition: function() { 
+        return !!document.querySelector( '[data-external],[data-external-replace]' ); 
+    } 
+},
 ```
-{ src: 'plugin/external/external.js', condition: function() { return !!document.querySelector( '[data-external]' ); } },
-```
-Then simply add an element into your presentation with a data-external attribute.
+Then simply add an element into your presentation with a data-external or data-external-replace attribute.
 
-```
+## data-external
+
+Will put the loaded content into the node with the data-external attribute.
+
+```html
 <section data-external="module_01/index.html"> </section>
 ```
 
-If you want to load external files, you have to choose relative paths in the "data-external"-attribute. In the following there is a simple example of how to include many files in one reveal presentation: 
+## data-external-replace
+
+Will replace the node with the loaded content. 
+
+```html
+<section data-external-replace="module_02/index.html"> </section>
+```
+
+## Load Fragments
+
+You can specify a CSS selector to add only a part of the loaded content. 
+
+```html
+<section data-external-replace="short.html#.slides > section"> </section>
+```
+
+## Options 
+
+```javascript
+external: {
+    async: false,
+    mapAttributes: ['src']
+}
+```
+
+### async
+
+By default the external files will be loaded synchronously. This avoids conflicts with other plugins.
+You can activate asynchronous loading with this option.
+
+## mapAttributes
+
+By default the plugin will convert relative paths (dot as first character) in `src` attributes. This
+allows you to specify the path relative to the file you're in, rather then the one it is included in.
+
+Set to `false` to disable, or provide an array of attribute names.
+
+## Recursion
+
+If you want to load external files, you have to choose relative paths in the "data-external*"-attribute. In the following there is a simple example of how to include many files in one reveal presentation: 
 
 Folder structure: 
 
