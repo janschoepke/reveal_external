@@ -26,6 +26,8 @@
 			<div class="slides">
 				<section data-external="includes/1.html"></section>
 				<section data-external="includes/2.html"></section>
+				<section data-external-replace="includes/3.html"></section>
+				<section data-external="includes/4.html#.slides > section"></section>
 			</div>
 		</div>
 
@@ -43,7 +45,13 @@
 					{ src: 'plugin/markdown/markdown.js' },
 					{ src: 'plugin/notes/notes.js', async: true },
 					{ src: 'plugin/highlight/highlight.js', async: true, callback: function() { hljs.initHighlightingOnLoad(); } },
-					{ src: '../external/external.js', condition: function() { return !!document.querySelector( '[data-external]' ); } }
+					{
+						src: '../external/external.js',
+						condition: function() {
+							return !!document.querySelector( '[data-external],[data-external-replace]' );
+						}
+					},
+
 				]
 			});
 		</script>
