@@ -20,6 +20,7 @@
  *
  * This started life as markdown.js. Thank you to whomever wrote it.
  * This version is based on external.js by Cal Evans. Thanks Cal!
+ * Thanks to Thomas Weinert (https://github.com/ThomasWeinert) for massive improvements in version 1.3!
  */
 (function() {
 	"use strict";
