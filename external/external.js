@@ -13,10 +13,10 @@
  */
 
 (function(){
-    loadExternal(document);
+	loadExternal(document);
 
 	function updateSection(section, path) {
-        "use strict";
+		"use strict";
 
 		var xhr = new XMLHttpRequest();
 		var url = section.getAttribute( "data-external" );
@@ -56,21 +56,20 @@
 
 	}
 
-    function loadExternal(selector, path) {
-        "use strict";
+	function loadExternal(selector, path) {
+		"use strict";
 
-        var sections = selector.querySelectorAll( "[data-external]");
-        
-        path = typeof path === "undefined" ? "" : path;
+		var sections = selector.querySelectorAll( "[data-external]");
 
-        for( var i = 0; i < sections.length; i+=1 ) {
+		path = typeof path === "undefined" ? "" : path;
 
-            var section = sections[i];
+		for( var i = 0; i < sections.length; i+=1 ) {
 
-            if( section.getAttribute( "data-external" ).length ) {
+			var section = sections[i];
+
+			if( section.getAttribute( "data-external" ).length ) {
 				updateSection(section, path);
 			}
-        }
-        return;
-    }
+		}
+	}
 })();
