@@ -24,10 +24,18 @@
 	<body>
 		<div class="reveal">
 			<div class="slides">
+
 				<section data-external="includes/1.html"></section>
 				<section data-external="includes/2.html"></section>
 				<section data-external-replace="includes/3.html"></section>
 				<section data-external="includes/4.html#.slides > section"></section>
+
+				<!--
+				<section data-external="includes_lazy/1.html"></section>
+				<section data-external="includes_lazy/2.html"></section>
+				<section data-external-replace="includes_lazy/3.html"></section>
+				<section data-external="includes_lazy/4.html#.slides > section"></section>
+				-->
 			</div>
 		</div>
 
@@ -38,6 +46,11 @@
 			// More info https://github.com/hakimel/reveal.js#configuration
 			Reveal.initialize({
 				history: true,
+
+                external: {
+				    //uncomment the above sections and comment the active ones when setting lazyLoad to true.
+               		lazyLoad: false
+             	},
 
 				// More info https://github.com/hakimel/reveal.js#dependencies
 				dependencies: [

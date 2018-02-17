@@ -15,7 +15,8 @@
  *
  * external: {
  *   async: false,
- *   mapAttributes: ['src']
+ *   mapAttributes: ['src'],
+ *   lazyLoad: false
  * }
  *
  * This started life as markdown.js. Thank you to whomever wrote it.
@@ -26,7 +27,7 @@
 	"use strict";
 
 	var config = Reveal.getConfig() || {}, options;
-	config.external = config.external || {};
+	config.external = config.external || {lazyLoad: false};
 	options = {
 		/*
 		  Some plugins run into problems, because they expect to have access
@@ -90,7 +91,7 @@
 		}
 	};
 
-	var updateSection = function( section, target, path ) {
+	var updateSection = function( section, target, path, recursive ) {
 		var url = path !== "" ? ( path + "/" + target.url ) : target.url;
 		var xhr = new XMLHttpRequest();
 
@@ -125,14 +126,22 @@
 								? target.parentNode.insertBefore( node, target )
 								: target.appendChild( node );
 
+                            target.removeAttribute('data-external');
+                            target.removeAttribute('data-external-replace');
+
 							if ( options.async ) {
 								Reveal.sync();
 								Reveal.setState( Reveal.getState() );
 							}
-
-							if ( node instanceof Element ) {
-								loadExternal( node, path );
-							}
+                            if(recursive) {
+                                if (node instanceof Element) {
+                                    loadExternal(node, path, true);
+                                }
+                            } else {
+                                if (node instanceof Element && node.nodeName !== "SECTION") {
+                                    loadExternal(node, '', true);
+                                }
+                            }
 						}
 						if ( replace ) {
 							target.parentNode.removeChild( target );
@@ -161,7 +170,7 @@
 		}
 	};
 
-	function loadExternal( container, path ) {
+	function loadExternal( container, path, recursive ) {
 		var target, section, sections;
 		path = typeof path === "undefined" ? "" : path;
 		if (
@@ -173,7 +182,7 @@
 		) {
 		  	target = getTarget( container );
 		  	if ( target ) {
-				updateSection( container, target, path );
+				updateSection( container, target, path, recursive );
 			}
 		} else {
 			sections = container.querySelectorAll(
@@ -183,11 +192,32 @@
 				section = sections[i];
 				target = getTarget( section );
 				if ( target ) {
-					updateSection( section, target, path );
+					updateSection( section, target, path, recursive );
 				}
 			}
 		}
 	}
 
-	loadExternal( document );
+    function lazyLoad(currentSlide) {
+        var attributes = currentSlide.attributes;
+
+        if(attributes.getNamedItem('data-external') || attributes.getNamedItem('data-external-replace')) {
+            loadExternal(currentSlide, '', false);
+            Reveal.sync();
+            Reveal.setState(Reveal.getState());
+        }
+    }
+
+    if(config.external.lazyLoad) {
+        //LazyLoad enabled, check for external resources for current slide on ready and change event
+        Reveal.addEventListener( 'ready', function(event) {
+            lazyLoad(event.currentSlide);
+        });
+        Reveal.addEventListener( 'slidechanged', function(event) {
+            lazyLoad(event.currentSlide);
+        });
+    } else {
+        //LazyLoad disabled, load all resources on init
+        loadExternal( document, '', true );
+    }
 })();
